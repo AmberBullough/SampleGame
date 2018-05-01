@@ -1,4 +1,4 @@
-﻿#region Using Statements
+#region Using Statements
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ using UIKit;
 #endif
 #endregion
 
-namespace SampleGame
+namespace SpaceGame
 {
 #if __IOS__ || __TVOS__
     [Register("AppDelegate")]
