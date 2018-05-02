@@ -4,6 +4,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+// Reference for all Model objects
+using SpaceGame.Model;
+
 namespace SpaceGame.Controller
 {
 	/// <summary>
@@ -18,6 +21,8 @@ namespace SpaceGame.Controller
 		{
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
+		// Represents the player 
+		private Player player;
 		}
 
 		/// <summary>
@@ -29,8 +34,11 @@ namespace SpaceGame.Controller
 		protected override void Initialize()
 		{
 			// TODO: Add your initialization logic here
+			// Initialize the player class
+			player = new Player();
 
 			base.Initialize();
+
 		}
 
 		/// <summary>
@@ -43,6 +51,12 @@ namespace SpaceGame.Controller
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 
 			//TODO: use this.Content to load your game content here 
+
+// Load the player resources 
+Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+
+player.Initialize(Content.Load<Texture2D>("Texture/player"), playerPosition);
+
 		}
 
 		/// <summary>
@@ -58,7 +72,8 @@ namespace SpaceGame.Controller
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
 				Exit();
 #endif
-
+			// Initialize the player class
+player = new Player();
 			// TODO: Add your update logic here
 
 			base.Update(gameTime);
@@ -73,6 +88,12 @@ namespace SpaceGame.Controller
 			graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 
 			//TODO: Add your drawing code here
+			// Start drawing 
+spriteBatch.Begin(); 
+// Draw the Player 
+player.Draw(spriteBatch); 
+// Stop drawing 
+spriteBatch.End();
 
 			base.Draw(gameTime);
 		}
