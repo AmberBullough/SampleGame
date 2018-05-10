@@ -3,6 +3,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+// Link the View namespace
+using YourProjectNameHere.View;
+ 
 
 // Reference for all Model objects
 using SpaceGame.Model;
@@ -22,6 +25,18 @@ namespace SpaceGame.Controller
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
 		// Represents the player 
+
+// Keyboard states used to determine key presses
+private KeyboardState currentKeyboardState;
+private KeyboardState previousKeyboardState;
+
+// Gamepad states used to determine button presses
+private GamePadState currentGamePadState;
+private GamePadState previousGamePadState;
+
+// A movement speed for the player
+private float playerMoveSpeed;
+
 		private Player player;
 		}
 
@@ -39,6 +54,9 @@ namespace SpaceGame.Controller
 
 			base.Initialize();
 
+			// Set a constant player move speed
+playerMoveSpeed = 8.0f;
+
 		}
 
 		/// <summary>
@@ -52,10 +70,15 @@ namespace SpaceGame.Controller
 
 			//TODO: use this.Content to load your game content here 
 
-// Load the player resources 
-Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+// Load the player resources
+Animation playerAnimation = new Animation();
+Texture2D playerTexture = Content.Load<Texture2D>("Animation/shipAnimation");
+playerAnimation.Initialize(playerTexture, Vector2.Zero, 115, 69, 8, 30, Color.White, 1f, true);
 
-player.Initialize(Content.Load<Texture2D>("Texture/player"), playerPosition);
+Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+player.Initialize(playerAnimation, playerPosition);
+
+
 
 		}
 
@@ -66,6 +89,8 @@ player.Initialize(Content.Load<Texture2D>("Texture/player"), playerPosition);
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Update(GameTime gameTime)
 		{
+			player.Update(gameTime);
+
 			// For Mobile devices, this logic will close the Game when the Back button is pressed
 			// Exit() is obsolete on iOS
 #if !__IOS__ && !__TVOS__
@@ -74,7 +99,21 @@ player.Initialize(Content.Load<Texture2D>("Texture/player"), playerPosition);
 #endif
 			// Initialize the player class
 player = new Player();
+
 			// TODO: Add your update logic here
+			// Save the previous state of the keyboard and game pad so we can determinesingle key/button presses
+previousGamePadState = currentGamePadState;
+previousKeyboardState = currentKeyboardState;
+
+// Read the current state of the keyboard and gamepad and store it
+currentKeyboardState = Keyboard.GetState();
+currentGamePadState = GamePad.GetState(PlayerIndex.One);
+
+
+//Update the player
+UpdatePlayer(gameTime);
+
+
 
 			base.Update(gameTime);
 		}
