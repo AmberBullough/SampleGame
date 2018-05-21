@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 // Link the View namespace
-using YourProjectNameHere.View;
+using SampleGame.View;
  
 
 // Reference for all Model objects
@@ -17,6 +17,13 @@ namespace SpaceGame.Controller
 	/// </summary>
 	public class SpaceGame : Game
 	{
+	// Image used to display the static background
+	private Texture2D mainBackground;
+
+	// Parallaxing Layers
+	private ParallaxingBackground bgLayer1;
+	private ParallaxingBackground bgLayer2;
+
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
 
@@ -51,6 +58,9 @@ private float playerMoveSpeed;
 			// TODO: Add your initialization logic here
 			// Initialize the player class
 			player = new Player();
+			bgLayer1 = new ParallaxingBackground();
+			bgLayer2 = new ParallaxingBackground();
+
 
 			base.Initialize();
 
@@ -67,6 +77,14 @@ playerMoveSpeed = 8.0f;
 		{
 			// Create a new SpriteBatch, which can be used to draw textures.
 			spriteBatch = new SpriteBatch(GraphicsDevice);
+			// Load the parallaxing background
+bgLayer1.Initialize(Content, "Texture/bgLayer1", GraphicsDevice.Viewport.Width, -1);
+bgLayer2.Initialize(Content, "Texture/bgLayer2", GraphicsDevice.Viewport.Width, -2);
+
+mainBackground = Content.Load<Texture2D>("Texture/mainbackground");
+
+
+
 
 			//TODO: use this.Content to load your game content here 
 
@@ -87,9 +105,13 @@ player.Initialize(playerAnimation, playerPosition);
 		/// checking for collisions, gathering input, and playing audio.
 		/// </summary>
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
-		protected override void Update(GameTime gameTime)
+		protected override void update(GameTime gameTime)
 		{
-			player.Update(gameTime);
+			player.update(gameTime);
+			// Update the parallaxing background
+			bgLayer1.Update();
+			bgLayer2.Update();
+
 
 			// For Mobile devices, this logic will close the Game when the Back button is pressed
 			// Exit() is obsolete on iOS
@@ -130,6 +152,14 @@ UpdatePlayer(gameTime);
 			// Start drawing 
 spriteBatch.Begin(); 
 // Draw the Player 
+			spriteBatch.Draw(mainBackground, Vector2.Zero, Color.White);
+
+// Draw the moving background
+bgLayer1.Draw(spriteBatch);
+bgLayer2.Draw(spriteBatch);
+
+
+
 player.Draw(spriteBatch); 
 // Stop drawing 
 spriteBatch.End();
